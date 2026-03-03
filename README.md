@@ -866,7 +866,7 @@ echo "🎉 Cleanup complete!"
 ## 🎯 Самоперевірка / Self-Assessment
 
 ```bash
-curl -O https://raw.githubusercontent.com/rossogamata/mar251-2/main/README.md
+curl -O https://raw.githubusercontent.com/rossogamata/mar251-2/main/self_check/check.sh
 chmod +x check.sh && ./check.sh
 ```
 
