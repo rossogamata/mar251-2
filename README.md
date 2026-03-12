@@ -26,4 +26,5 @@
 
 *Підготовлено для AWS Academy Learner Lab | Методології автоматизованого розгортання ІТ інфраструктури — 5 курс*
 *Prepared for AWS Academy Learner Lab | Cloud Technologies — 5th Year* 🇺🇦
+---
 *ВІДКРИТА ІНФОРМАЦІЯ*
