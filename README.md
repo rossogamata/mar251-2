@@ -12,6 +12,7 @@
 |---|---|---|
 | [Lesson 3.1](./Lesson3_1/README.md) | 🛡️ VPC · EC2 · Network ACL · Elastic IP | VPC, EC2, IGW, Route Table, Security Group, NACL, EIP |
 | [Lesson 4.1](./Lesson4_1/README.md) | 🗄️ Storage · Databases · Auto Scaling · Monitoring | S3, EBS, RDS, DynamoDB, Auto Scaling, CloudWatch, SNS |
+| [Lesson 5.1](./Lesson5_1/README.md) | 🗃️ Databases · Scaling · Load Balancing | RDS, DynamoDB, Auto Scaling, ALB |
 
 ---
 
