@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/enduro/viti/mar251-2/**)"
+    ]
+  }
+}
