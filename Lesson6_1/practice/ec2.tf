@@ -39,7 +39,7 @@ resource "aws_instance" "web_server" {
   tags = { Name = "WebServer" }
 }
 
-resource "aws_instance" "mat251_252_server" {
+resource "aws_instance" "app_server" {
   ami                    = data.aws_ami.amazon_linux_2023.id
   instance_type          = var.instance_type
   subnet_id              = aws_subnet.subnet_b.id
