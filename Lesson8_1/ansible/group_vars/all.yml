@@ -1,0 +1,88 @@
+---
+# ══════════════════════════════════════════════════════════
+#  group_vars/all.yml — змінні для всіх хостів
+#  Методології автоматизованого розгортання ІТ інфраструктури
+#
+#  Ansible автоматично завантажує цей файл для кожного хоста.
+#  Змінюйте значення тут — playbook.yml не потребує правок.
+#
+#  Ієрархія змінних (від найнижчого до найвищого пріоритету):
+#  group_vars/all.yml → group_vars/<group>.yml → host_vars/<host>.yml → -e (CLI)
+# ══════════════════════════════════════════════════════════
+
+
+# ── Список пакетів для встановлення ────────────────────────
+# Ansible передає весь список одним викликом 'dnf install',
+# що значно швидше ніж встановлювати кожен пакет окремою задачею.
+#
+# Щоб додати пакет — просто додайте рядок до списку.
+# Щоб видалити пакет із сервера — змініть state: present → state: absent у playbook.
+packages:
+  - git        # система контролю версій — для клонування репозиторіїв на сервері
+  - docker     # платформа контейнеризації
+  - net-tools  # мережеві утиліти: ifconfig, netstat, route, arp тощо
+
+
+# ── Список системних користувачів ──────────────────────────
+# Кожен елемент — це об'єкт (словник) із полями:
+#
+#   name     — ім'я облікового запису (login name, латиниця, без пробілів)
+#   comment  — опис у /etc/passwd (GECOS поле), для зручності адміністрування
+#   shell    — командна оболонка:
+#              /bin/bash      — для людей, що будуть входити інтерактивно
+#              /sbin/nologin  — для сервісних акаунтів (вхід заборонено)
+#   groups   — список додаткових груп (порожній список [] = без додаткових груп):
+#              docker — дозволяє запускати docker без sudo
+#              wheel  — група адміністраторів (sudo)
+#
+# Ansible додає користувача до вказаних груп, НЕ видаляючи з поточних (append: true).
+users:
+  - name:    "deploy"
+    comment: "Deployment service account"
+    shell:   "/bin/bash"
+    groups:  ["docker"]
+
+  - name:    "developer"
+    comment: "Developer account"
+    shell:   "/bin/bash"
+    groups:  ["docker"]
+
+  - name:    "devops"
+    comment: "DevOps engineer"
+    shell:   "/bin/bash"
+    groups:  ["docker", "wheel"]
+
+  - name:    "monitoring"
+    comment: "Monitoring service account"
+    shell:   "/sbin/nologin"
+    groups:  []
+
+  - name:    "backup"
+    comment: "Backup service account"
+    shell:   "/sbin/nologin"
+    groups:  []
+
+  - name:    "jenkins"
+    comment: "CI/CD Jenkins account"
+    shell:   "/bin/bash"
+    groups:  ["docker"]
+
+  - name:    "gitlab"
+    comment: "GitLab Runner account"
+    shell:   "/bin/bash"
+    groups:  ["docker"]
+
+  - name:    "ansible"
+    comment: "Ansible automation account"
+    shell:   "/bin/bash"
+    groups:  ["wheel"]
+
+  - name:    "ops"
+    comment: "Operations team account"
+    shell:   "/bin/bash"
+    groups:  ["docker", "wheel"]
+
+  - name:    "sysadmin"
+    comment: "System administrator"
+    shell:   "/bin/bash"
+    groups:  ["wheel"]
