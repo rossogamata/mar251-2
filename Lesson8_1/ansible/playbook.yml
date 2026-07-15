@@ -50,6 +50,12 @@
     #           --create-home \
     #           deploy
     # ────────────────────────────────────────────────────
+    - name: Create a new group
+      ansible.builtin.group:
+        name: docker
+        state: present
+        gid: 1050
+
 
     - name: "Створити системного користувача {{ item.name }}"
       ansible.builtin.user:
@@ -188,3 +194,13 @@
       #   monitoring → groups: []                 → ПРОПУСТИТИ (docker відсутній)
       #   sysadmin  → groups: ["wheel"]           → ПРОПУСТИТИ (docker відсутній)
       when: "'docker' in item.groups"
+
+    - name: "Запустити Docker контейнер"
+      community.docker.docker_container:
+        name:    devops-landing
+        image:   rossogamata/devops-landing:v1.0
+        # (за додаткові бали: використайте власний Docker image із Lesson 7.1)
+        state:   started
+        restart_policy: always
+        ports:
+          - "80:80"

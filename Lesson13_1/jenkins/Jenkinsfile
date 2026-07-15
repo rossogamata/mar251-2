@@ -1,0 +1,93 @@
+// Заняття 13.1 — приклад Declarative Pipeline
+//
+// Пайплайн збирає Docker image з проекту Lesson7_1/app, публікує його
+// на Docker Hub і (опційно) розгортає на сервері через Ansible з Lesson8_1.
+// Розмістіть цей файл у корені вашого GitHub-репозиторію під назвою "Jenkinsfile".
+
+pipeline {
+    agent any
+
+    // Змінні оточення, доступні у всіх stages
+    environment {
+        IMAGE_NAME = 'rossogamata/devops-landing'
+        // credentials() підставляє логін/пароль з Jenkins Credentials
+        // за ID 'dockerhub-credentials' у змінні DOCKERHUB_CREDENTIALS_USR / _PSW
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+    }
+
+    // Опції пайплайну
+    options {
+        timeout(time: 15, unit: 'MINUTES')   // аварійне завершення, якщо зависло
+        disableConcurrentBuilds()            // не запускати два build одночасно
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                // При використанні "Pipeline script from SCM" Jenkins сам
+                // виконує checkout — цей крок явний для наочності заняття.
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh """
+                    docker build \
+                      -t ${IMAGE_NAME}:${BUILD_NUMBER} \
+                      -t ${IMAGE_NAME}:latest \
+                      Lesson7_1/app
+                """
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Мінімальна перевірка: контейнер піднімається і віддає 200 на "/"
+                sh """
+                    docker run -d --name smoke-test-${BUILD_NUMBER} -p 8081:80 ${IMAGE_NAME}:${BUILD_NUMBER}
+                    sleep 3
+                    curl -sf http://localhost:8081/ > /dev/null
+                    docker rm -f smoke-test-${BUILD_NUMBER}
+                """
+            }
+        }
+
+        stage('Push') {
+            steps {
+                sh """
+                    echo "\$DOCKERHUB_CREDENTIALS_PSW" | docker login -u "\$DOCKERHUB_CREDENTIALS_USR" --password-stdin
+                    docker push ${IMAGE_NAME}:${BUILD_NUMBER}
+                    docker push ${IMAGE_NAME}:latest
+                """
+            }
+        }
+
+        stage('Deploy') {
+            when {
+                branch 'main'   // деплой лише зі стабільної гілки
+            }
+            steps {
+                sh """
+                    ansible-playbook \
+                      -i Lesson8_1/ansible/inventory/hosts.ini \
+                      Lesson8_1/ansible/playbook.yml \
+                      --extra-vars "image_tag=${BUILD_NUMBER}"
+                """
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'docker logout || true'
+        }
+        success {
+            echo "Build #${BUILD_NUMBER} succeeded ✅  image: ${IMAGE_NAME}:${BUILD_NUMBER}"
+        }
+        failure {
+            echo "Build #${BUILD_NUMBER} failed ❌ — перевірте Console Output"
+        }
+    }
+}

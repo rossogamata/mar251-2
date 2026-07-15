@@ -15,6 +15,7 @@
 | [Lesson 5.1](./Lesson5_1/README.md) | 🗃️ Databases · Scaling · Load Balancing | RDS, DynamoDB, Auto Scaling, ALB |
 | [Lesson 6.1](./Lesson6_1/README.md) | 🏗️ Автоматизоване розгортання · IaC | IaC Tools |
 | [Lesson 6.1 Practice](./Lesson6_1/practice/README.md) | 🟣 Terraform: відтворення інфраструктури Lesson 3.1 | Terraform, VPC, EC2, EIP, NACL, SG |
+| [Lesson 13.1](./Lesson13_1/README.md) | 🔧 Jenkins: основні поняття та конфігурація | Jenkins, Docker, GitHub Webhook, Ansible |
 
 ---
 

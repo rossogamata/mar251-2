@@ -1,0 +1,26 @@
+# Заняття 13.1 — локальний Jenkins Controller
+#
+# Запуск:   docker compose up -d --build
+# Логи:     docker compose logs -f jenkins
+# Зупинка:  docker compose down          (jenkins_home зберігається)
+# Знищення: docker compose down -v       (видаляє й jenkins_home)
+
+services:
+  jenkins:
+    build: .
+    image: local/jenkins-docker:lts-jdk17
+    container_name: jenkins
+    # root потрібен лише для доступу до змонтованого /var/run/docker.sock
+    # (спрощення для навчального середовища; у проді використовуйте
+    # окрему групу "docker" з підібраним GID замість root).
+    user: root
+    ports:
+      - "8080:8080"   # Jenkins Web UI
+      - "50000:50000" # канал для підключення JNLP-агентів
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:
